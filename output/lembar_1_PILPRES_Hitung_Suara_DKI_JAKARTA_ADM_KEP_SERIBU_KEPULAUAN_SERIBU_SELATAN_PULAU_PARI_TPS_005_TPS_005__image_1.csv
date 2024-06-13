@@ -1,0 +1,11 @@
+Category,Value
+Jumlah pemilih dalam DPT,"[131, 127, 258]"
+Jumlah pengguna hak pilih dalam DPT,"[111, 112, 228]"
+Jumlah pengguna hak pilih dalam DPTb,"[1, 2, 3]"
+Jumlah pengguna hak pilih dalam DPK,"[1, 0, 1]"
+Jumlah pengguna hak pilih (B.1 + B.2 + B.3),"[118, 114, 232]"
+"Jumlah surat suara yang diterima, termasuk surat suara cadangan 2% dari DPT",264
+Jumlah surat suara yang digunakan,232
+Jumlah surat suara yang dikembalikan oleh pemilih (karena rusak atau keliru coblos),0
+"Jumlah surat suara yang tidak digunakan/tidak terpakai, termasuk sisa surat suara cadangan",32
+Jumlah seluruh pemilih disabilitas yang menggunakan hak pilih,"[1, 1, 2]"
