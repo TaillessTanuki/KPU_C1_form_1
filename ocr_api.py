@@ -1,38 +1,40 @@
 from flask import Flask, request, jsonify
 import os
-
+import logging
+import ocr_lembar_1_v2_api
+import ocr_lembar_2
+import ocr_lembar_3
 app = Flask(__name__)
 
-from ocr_lembar_1_v2_api import ocr_lembar_1
-from ocr_lembar_2 import ocr_lembar_2
-from ocr_lembar_3 import ocr_lembar_3
-
-OCR_FUNCTIONS = {
-    'lembar_1': lambda image_path: ocr_lembar_1(image_path, auto_continue=True),
-    'lembar_2': lambda image_path: ocr_lembar_2(image_path, auto_continue=True),
-    'lembar_3': lambda image_path: ocr_lembar_3(image_path, auto_continue=True)
-}
 
 @app.route('/ocr', methods=['POST'])
 def ocr():
-    if 'image' not in request.files or 'lembar' not in request.form:
-        return jsonify({"error": "Please provide an image and lembar type"}), 400
+    data = request.json
+    boxes = data.get('boxes')
+    image = data.get('image')
+    lembar = data.get('lembar')
 
-    image = request.files['image']
-    lembar = request.form['lembar']
+    if not image or not boxes or not lembar:
+        return jsonify({'error': 'Invalid input'}), 400
 
-    if lembar not in OCR_FUNCTIONS:
-        return jsonify({"error": "Invalid lembar type"}), 400
+    logging.debug(f"Lembar: {lembar}")
 
-    image_path = os.path.join('api_test', image.filename)
-    image.save(image_path)
+    if lembar == 'lembar_1':
+        grouped_predictions = ocr_lembar_1_v2_api.predict_numbers_lembar_1(boxes, image)
+    elif lembar == 'lembar_2':
+        grouped_predictions = ocr_lembar_2.predict_numbers_lembar_2(boxes, image)
+    elif lembar == 'lembar_3':
+        grouped_predictions = ocr_lembar_3.predict_numbers_lembar_3(boxes, image)
+    else:
+        return jsonify({'error': 'Invalid lembar value'}), 400
 
-    ocr_function = OCR_FUNCTIONS[lembar]
-    ocr_result = ocr_function(image_path)
+    logging.debug(f"Result: {grouped_predictions}")
 
-    os.remove(image_path)
+    response = {
+        'Hasil': grouped_predictions
+    }
 
-    return jsonify({"ocr_result": ocr_result})
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
